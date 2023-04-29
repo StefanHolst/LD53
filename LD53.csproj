@@ -12,4 +12,29 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Game\Figures\MAD" />
+    <EmbeddedResource Include="Game\Figures\MAD">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <None Remove="Game\Figures\NORMAL" />
+    <EmbeddedResource Include="Game\Figures\NORMAL">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <None Remove="Game\Figures\SAD" />
+    <EmbeddedResource Include="Game\Figures\SAD">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <None Remove="Game\Assets\Box" />
+    <EmbeddedResource Include="Game\Assets\Box" />
+    <None Remove="Game\Assets\HDoor" />
+    <EmbeddedResource Include="Game\Assets\HDoor" />
+    <None Remove="Game\Assets\Key" />
+    <EmbeddedResource Include="Game\Assets\Key" />
+    <None Remove="Game\Assets\Table" />
+    <EmbeddedResource Include="Game\Assets\Table" />
+    <None Remove="Game\Assets\VDoor" />
+    <EmbeddedResource Include="Game\Assets\VDoor" />
+  </ItemGroup>
+
 </Project>

@@ -13,8 +13,8 @@ public class ConsoleChars
     public static char RoundLine => '\u25E0'; // ◠
     public static char HLine => '\u2500'; // ─
     public static char VLine => '\u2502'; // │
-    public static char LeftTee => '\u251c'; // \
-    public static char RightTee => '\u2524'; // \
-    public static char TopTee => '\u252c'; // \
-    public static char BottomTee => '\u2534'; // \
+    public static char LeftTee => '\u251c'; // ├
+    public static char RightTee => '\u2524'; // ┤
+    public static char TopTee => '\u252c'; // ┬
+    public static char BottomTee => '\u2534'; // ┴
 }

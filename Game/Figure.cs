@@ -1,46 +1,52 @@
 using System;
+using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace LD53;
 
 public class Person : View
 {
-    const string NORMAL = @" /\_/\
-⟨_o_o_⟩
- ⟨u_u⟩
-";
-    const string SAD = @" /\_/\
-⟨_ó_ò_⟩
- ⟨u_u⟩
-";
-    const string MAD = @" /\_/\
-⟨_ò_ó_⟩
- ⟨u_u⟩
-";
-
-    private string figure = NORMAL;
-
+    private string figure;
     private string message = null;
 
+    private void LoadFigure(string figure)
+    {
+        using var stream = Assembly.GetEntryAssembly().GetManifestResourceStream("LD53.Game.Figures." + figure);
+        using var reader = new StreamReader(stream);
+        this.figure = reader.ReadToEnd();
+    }
+
+    public Person()
+    {
+        Bound.Width = 7;
+        Bound.Height = 3;
+        LoadFigure("NORMAL");
+    }
+    
     public override bool KeyPressed(ConsoleKeyInfo key)
     {
         switch (key.Key)
         {
             case ConsoleKey.LeftArrow:
                 Bound.X--;
-                figure = MAD;
+                LoadFigure("MAD");
+                CheckCollision();
                 break;
             case ConsoleKey.RightArrow:
                 Bound.X++;
-                figure = NORMAL;
+                LoadFigure("NORMAL");
+                CheckCollision();
                 break;
             case ConsoleKey.UpArrow:
                 Bound.Y--;
-                figure = SAD;
+                LoadFigure("SAD");
+                CheckCollision();
                 break;
             case ConsoleKey.DownArrow:
                 Bound.Y++;
-                figure = NORMAL;
+                LoadFigure("NORMAL");
+                CheckCollision();
                 break;
             case ConsoleKey.Spacebar:
                 ShowMessage("heelllo");
@@ -112,5 +118,13 @@ public class Person : View
             await Task.Delay(5000);
             this.message = null;
         });
+    }
+
+    private void CheckCollision()
+    {
+        var map = GameState.CurrentMap;
+        var collision = map.Collides(Bound);
+        if (collision != null)
+            ShowMessage($"collided {collision.GetType().Name}");
     }
 }
