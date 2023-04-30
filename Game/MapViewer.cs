@@ -12,7 +12,7 @@ public class MapViewer : View
         GameState.Person = new Person();
         AddChildView(GameState.Person);
         GameState.Person.Bound.X = 24;
-        GameState.Person.Bound.Y = 4;
+        GameState.Person.Bound.Y = 6;
     }
     public override void Render()
     {

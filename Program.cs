@@ -46,6 +46,6 @@ public class Program
         var CancellationTokenSource = new CancellationTokenSource();
         Console.CancelKeyPress += (sender, args) => CancellationTokenSource.Cancel();
         
-        consoleRender.Run(menu, CancellationTokenSource.Token);
+        consoleRender.Run(mapViewer, CancellationTokenSource.Token);
     }
 }

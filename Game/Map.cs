@@ -20,7 +20,9 @@ public class Map
 
     public static Map Load(string name)
     {
-        var json = File.ReadAllText($"Maps/{name}.map");
+        using var stream = Assembly.GetEntryAssembly()!.GetManifestResourceStream($"LD53.Maps.{name}.map");
+        using var reader = new StreamReader(stream!);
+        var json = reader.ReadToEnd();
         var map = JsonSerializer.Deserialize<Map>(json);
         map.Name = name;
         map.UpdateLookup();

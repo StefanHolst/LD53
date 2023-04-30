@@ -7,13 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Update="Maps\Start.map">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="Game\Figures\MAD" />
     <EmbeddedResource Include="Game\Assets\Box" />
     <EmbeddedResource Include="Game\Assets\BoxA" />
     <EmbeddedResource Include="Game\Assets\BoxB" />
@@ -21,6 +14,7 @@
     <EmbeddedResource Include="Game\Assets\BoxD" />
     <EmbeddedResource Include="Game\Assets\BoxE" />
     <EmbeddedResource Include="Game\Assets\BoxF" />
+    <EmbeddedResource Include="Game\Assets\BoxKey1" />
     <EmbeddedResource Include="Game\Assets\BoxKey2" />
     <EmbeddedResource Include="Game\Assets\BoxKey3" />
     <EmbeddedResource Include="Game\Assets\BoxSlotA" />
@@ -29,42 +23,27 @@
     <EmbeddedResource Include="Game\Assets\BoxSlotD" />
     <EmbeddedResource Include="Game\Assets\BoxSlotE" />
     <EmbeddedResource Include="Game\Assets\BoxSlotF" />
-    <EmbeddedResource Include="Game\Assets\BoxKey1" />
+    <EmbeddedResource Include="Game\Assets\Chair" />
+    <EmbeddedResource Include="Game\Assets\Chest" />
     <EmbeddedResource Include="Game\Assets\CountChest" />
     <EmbeddedResource Include="Game\Assets\Glass" />
+    <EmbeddedResource Include="Game\Assets\HDoor" />
     <EmbeddedResource Include="Game\Assets\JapanChest" />
+    <EmbeddedResource Include="Game\Assets\Key" />
     <EmbeddedResource Include="Game\Assets\LastChest" />
     <EmbeddedResource Include="Game\Assets\MorseChest" />
-    <EmbeddedResource Include="Game\Figures\MAD">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <None Remove="Game\Figures\NORMAL" />
-    <EmbeddedResource Include="Game\Figures\NORMAL">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <None Remove="Game\Figures\SAD" />
-    <EmbeddedResource Include="Game\Figures\SAD">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <None Remove="Game\Assets\Box" />
-    <None Remove="Game\Assets\HDoor" />
-    <EmbeddedResource Include="Game\Assets\HDoor" />
-    <None Remove="Game\Assets\Key" />
-    <EmbeddedResource Include="Game\Assets\Key" />
-    <None Remove="Game\Assets\Table" />
     <EmbeddedResource Include="Game\Assets\Table" />
-    <None Remove="Game\Assets\VDoor" />
     <EmbeddedResource Include="Game\Assets\VDoor" />
-    <None Remove="Game\Assets\Chest" />
-    <EmbeddedResource Include="Game\Assets\Chest" />
-    <None Remove="Maps\Morse.map" />
-    <EmbeddedResource Include="Maps\Morse.map" />
-    <None Remove="Game\Assets\Chair" />
-    <EmbeddedResource Include="Game\Assets\Chair" />
-    <None Remove="Game\Assets\BoxSlot" />
-    <None Remove="Maps\Japan.map" />
+    
+    <EmbeddedResource Include="Game\Figures\MAD"/>
+    <EmbeddedResource Include="Game\Figures\NORMAL"/>
+    <EmbeddedResource Include="Game\Figures\SAD"/>
+    
     <EmbeddedResource Include="Maps\Japan.map" />
-    <None Remove="Maps\Win.map" />
+    <EmbeddedResource Include="Maps\Maze.map" />
+    <EmbeddedResource Include="Maps\Morse.map" />
+    <EmbeddedResource Include="Maps\Start.map"/>
+    <EmbeddedResource Include="Maps\Time.map"/>
     <EmbeddedResource Include="Maps\Win.map" />
   </ItemGroup>
 

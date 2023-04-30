@@ -8,10 +8,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Build
-        run: dotnet build -c Release
+        run: |
+          dotnet publish -r win-x64 -p:PublishSingleFile=true --self-contained false
+          dotnet publish -r linux-x64 -p:PublishSingleFile=true --self-contained false
+          dotnet publish -r osx-x64 -p:PublishSingleFile=true --self-contained false
       - name: Save artifacts
         uses: actions/upload-artifact@v3
         with:
           name: build
           retention-days: 5
-          path: "bin/Release/"
+          path: |
+            "bin/Debug/win-x64/publish/LD53.exe"
+            "bin/Debug/linux-x64/publish/LD53"
+            "bin/Debug/osx-x64/publish/LD53"
