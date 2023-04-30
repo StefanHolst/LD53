@@ -63,6 +63,31 @@ public class Dialog : Frame
         
         return textBox.Content;
     }
+    public static void ShowView(string title, string message, View view)
+    {
+        var dialog = new Dialog(title, message);
+        dialog.AddChildView(view);
+        dialog.Bound.Width = Math.Max(message.Length, view.Bound.Width) + 6;
+        dialog.Bound.Height = Math.Max(8, view.Bound.Height);
+        dialog.Bound.VerticalAlignment = Alignment.Center;
+        dialog.Bound.HorizontalAlignment = Alignment.Center;
+        
+        var render = new ConsoleRender();
+        var tokenSource = new CancellationTokenSource();
+        
+        // wait for input
+        dialog.Ok = () =>
+        {
+            tokenSource.Cancel();
+        };
+        dialog.Cancel = () =>
+        {
+            tokenSource.Cancel();
+        };
+        
+        render.Run(dialog, tokenSource.Token);
+        ConsoleRender.RedrawEverything();
+    }
 
     public override bool PreviewKeyPressed(ConsoleKeyInfo key)
     {
@@ -84,6 +109,8 @@ public class Dialog : Frame
     {
         base.Render();
 
+        if (Message.Length == 0)
+            return;
         for (int i = 0; i < Message.Length; i++)
         {
             Move(i + 2, 1);

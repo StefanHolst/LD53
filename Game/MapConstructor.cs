@@ -28,18 +28,34 @@ public class MapConstructor : View
         new() { Points = new List<MapPoint> { new(0, 0, ConsoleChars.BottomTee) }, Type = MapAssetType.Wall },
         new() { Points = new List<MapPoint> { new(0, 0, '/') }, Type = MapAssetType.Wall },
         new() { Points = new List<MapPoint> { new(0, 0, '\\') }, Type = MapAssetType.Wall },
-        new() { Points = new List<MapPoint> { new(0, 0, 'x'), new(0, 1, 'x'), new(0, 2, 'x') }, Type = MapAssetType.Wall },
-        new() { Points = new List<MapPoint> { new(1, 0, 'x'), new(3, 0, 'x'), new(5, 0, 'x') }, Type = MapAssetType.Wall },
 
         
         MapAsset.LoadFromAssets("Table"),
         MapAsset.LoadFromAssets("Chair"),
-        MapAsset.LoadFromAssets("Box"),
-        MapAsset.LoadFromAssets("BoxSlot"),
+        MapAsset.LoadFromAssets("BoxA"),
+        MapAsset.LoadFromAssets("BoxSlotA"),
+        MapAsset.LoadFromAssets("BoxB"),
+        MapAsset.LoadFromAssets("BoxSlotB"),
+        MapAsset.LoadFromAssets("BoxC"),
+        MapAsset.LoadFromAssets("BoxSlotC"),
+        MapAsset.LoadFromAssets("BoxD"),
+        MapAsset.LoadFromAssets("BoxSlotD"),
+        MapAsset.LoadFromAssets("BoxE"),
+        MapAsset.LoadFromAssets("BoxSlotE"),
+        MapAsset.LoadFromAssets("BoxF"),
+        MapAsset.LoadFromAssets("BoxSlotF"),
         MapAsset.LoadFromAssets("Key"),
+        MapAsset.LoadFromAssets("Glass"),
         MapAsset.LoadFromAssets("Chest"),
+        MapAsset.LoadFromAssets("MorseChest"),
+        MapAsset.LoadFromAssets("JapanChest"),
+        MapAsset.LoadFromAssets("CountChest"),
+        MapAsset.LoadFromAssets("LastChest"),
         MapAsset.LoadFromAssets("HDoor"),
         MapAsset.LoadFromAssets("VDoor"),
+        MapAsset.LoadFromAssets("BoxKey1"),
+        MapAsset.LoadFromAssets("BoxKey2"),
+        MapAsset.LoadFromAssets("BoxKey3"),
     };
     
     public MapConstructor(string name)
@@ -84,7 +100,7 @@ public class MapConstructor : View
                         MapAssetType.Wall => map.Walls.Remove(existing.Points[0]),
                         MapAssetType.None => map.Text.Remove(existing.Points[0]),
                         MapAssetType.Asset => map.Assets.Remove(existing),
-                        MapAssetType.Entrance => map.Entrances.Remove((MapEntrance)existing),
+                        _ => map.Entrances.Remove((MapEntrance)existing),
                     };
                 }
                 break;
@@ -123,7 +139,7 @@ public class MapConstructor : View
         }
 
         // Text
-        if ((key.Key >= ConsoleKey.A && key.Key <= ConsoleKey.Z) || key.KeyChar == '?' || key.KeyChar == '.' || key.KeyChar == '!' || key.KeyChar == ',' || key.KeyChar == ' ')
+        if ((key.Key >= ConsoleKey.A && key.Key <= ConsoleKey.Z) || key.KeyChar == '?' || key.KeyChar == '.' || key.KeyChar == '!' || key.KeyChar == ',')
         {
             var selected = map.Text.FirstOrDefault(c => c.X == Bound.X + x && c.Y == Bound.Y + y);
             if (selected != null)
@@ -141,13 +157,21 @@ public class MapConstructor : View
             if (map.Lookup.ContainsKey($"{Bound.X + x},{Bound.Y + y}"))
             {
                 var existing = map.Lookup[$"{Bound.X + x},{Bound.Y + y}"];
-                _ = existing.Type switch
+                switch (existing.Type)
                 {
-                    MapAssetType.Wall => map.Walls.Remove(existing.Points[0]),
-                    MapAssetType.None => map.Text.Remove(existing.Points[0]),
-                    MapAssetType.Asset => map.Assets.Remove(existing),
-                    // MapAssetType.Entrance => map.Entrances.Remove(existing),
-                };
+                    case MapAssetType.Wall:
+                        map.Walls.Remove(existing.Points[0]);
+                        break;
+                    case MapAssetType.None:
+                        map.Text.Remove(existing.Points[0]);
+                        break;
+                    case MapAssetType.Asset:
+                        map.Assets.Remove(existing);
+                        break;
+                    case MapAssetType.Entrance:
+                        // map.Entrances.Remove((MapEntrance)existing);
+                        break;
+                }
             }
             
             switch (asset.Type)
@@ -163,6 +187,7 @@ public class MapConstructor : View
                     {
                         Points = asset.Points.Select(p => new MapPoint(p.X + x, p.Y + y, p.C)).ToList(),
                         Type = asset.Type,
+                        Name = asset.Name
                     };
                     map.Assets.Add(newAsset);
                     drawing = false;

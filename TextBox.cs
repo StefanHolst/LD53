@@ -31,33 +31,41 @@ public class TextBox : Frame
         return false;
     }
 
-    private int curserCount = 0;
-    private bool showCursor = false;
+    protected int Length => Math.Min(content.Length, Bound.Width - 3);
+    public bool ShowCurser { get; set; } = true;
+    
     public override void Render()
     {
         base.Render();
 
-        int length = Math.Min(content.Length, Bound.Width - 3);
         int offset = 0;
         if (content.Length > Bound.Width - 2)
             offset = content.Length - (Bound.Width - 2);
 
-        curserCount++;
-        if (curserCount == 15)
-        {
-            showCursor = !showCursor;
-            curserCount = 0;
-        }
-        if (showCursor)
-        {
-            Move(length + 1, 1);
-            Draw('|');
-        }
+        if (ShowCurser)
+            DrawCursor();
 
-        for (int x = 0; x < length; x++)
+        for (int x = 0; x < Length; x++)
         {
             Move(x + 1, 1);
             Draw(content[x + offset]);
+        }
+    }
+
+    private int curserCount = 0;
+    private bool showVisible = false;
+    private void DrawCursor()
+    {
+        curserCount++;
+        if (curserCount == 15)
+        {
+            showVisible = !showVisible;
+            curserCount = 0;
+        }
+        if (showVisible)
+        {
+            Move(Length + 1, 1);
+            Draw('|');
         }
     }
 }

@@ -9,10 +9,10 @@ public class MapViewer : View
     public MapViewer(string name)
     {
         map = Map.Load(name);
-        var person = new Person();
-        AddChildView(person);
-        person.Bound.X = 24;
-        person.Bound.Y = 4;
+        GameState.Person = new Person();
+        AddChildView(GameState.Person);
+        GameState.Person.Bound.X = 24;
+        GameState.Person.Bound.Y = 4;
     }
     public override void Render()
     {

@@ -14,6 +14,27 @@
 
   <ItemGroup>
     <None Remove="Game\Figures\MAD" />
+    <EmbeddedResource Include="Game\Assets\Box" />
+    <EmbeddedResource Include="Game\Assets\BoxA" />
+    <EmbeddedResource Include="Game\Assets\BoxB" />
+    <EmbeddedResource Include="Game\Assets\BoxC" />
+    <EmbeddedResource Include="Game\Assets\BoxD" />
+    <EmbeddedResource Include="Game\Assets\BoxE" />
+    <EmbeddedResource Include="Game\Assets\BoxF" />
+    <EmbeddedResource Include="Game\Assets\BoxKey2" />
+    <EmbeddedResource Include="Game\Assets\BoxKey3" />
+    <EmbeddedResource Include="Game\Assets\BoxSlotA" />
+    <EmbeddedResource Include="Game\Assets\BoxSlotB" />
+    <EmbeddedResource Include="Game\Assets\BoxSlotC" />
+    <EmbeddedResource Include="Game\Assets\BoxSlotD" />
+    <EmbeddedResource Include="Game\Assets\BoxSlotE" />
+    <EmbeddedResource Include="Game\Assets\BoxSlotF" />
+    <EmbeddedResource Include="Game\Assets\BoxKey1" />
+    <EmbeddedResource Include="Game\Assets\CountChest" />
+    <EmbeddedResource Include="Game\Assets\Glass" />
+    <EmbeddedResource Include="Game\Assets\JapanChest" />
+    <EmbeddedResource Include="Game\Assets\LastChest" />
+    <EmbeddedResource Include="Game\Assets\MorseChest" />
     <EmbeddedResource Include="Game\Figures\MAD">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
@@ -26,7 +47,6 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
     <None Remove="Game\Assets\Box" />
-    <EmbeddedResource Include="Game\Assets\Box" />
     <None Remove="Game\Assets\HDoor" />
     <EmbeddedResource Include="Game\Assets\HDoor" />
     <None Remove="Game\Assets\Key" />
@@ -42,7 +62,10 @@
     <None Remove="Game\Assets\Chair" />
     <EmbeddedResource Include="Game\Assets\Chair" />
     <None Remove="Game\Assets\BoxSlot" />
-    <EmbeddedResource Include="Game\Assets\BoxSlot" />
+    <None Remove="Maps\Japan.map" />
+    <EmbeddedResource Include="Maps\Japan.map" />
+    <None Remove="Maps\Win.map" />
+    <EmbeddedResource Include="Maps\Win.map" />
   </ItemGroup>
 
 </Project>

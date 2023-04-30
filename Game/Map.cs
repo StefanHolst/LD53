@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -36,46 +37,25 @@ public class Map
         foreach (var asset in Assets)
             foreach (var point in asset.Points)
                 Lookup[$"{point.X},{point.Y}"] = asset;
-        foreach (var point in Text)
-            Lookup[$"{point.X},{point.Y}"] = new() { Points = new List<MapPoint> { point }, Type = MapAssetType.None };
+        foreach (var text in Text)
+            Lookup[$"{text.X},{text.Y}"] = new() { Points = new List<MapPoint> { text }, Type = MapAssetType.None };
     }
 
-    public MapAsset Collides(Bounds bound)
+    public List<MapAsset> Collides(Bounds bound)
     {
-        MapAsset collides;
-        // Check top
+        var list = new HashSet<MapAsset>();
+        
+        // Check everything
         for (int x = 0; x < bound.Width; x++)
         {
-            var point = $"{bound.X + x},{bound.Y}";
-            if (Lookup.TryGetValue(point, out collides))
-                return collides;
+            for (int y = 0; y < bound.Height; y++)
+            {
+                var point = $"{bound.X + x},{bound.Y + y}";
+                if (Lookup.TryGetValue(point, out var collides))
+                    list.Add(collides);
+            }
         }
-        
-        // Check bottom
-        for (int x = 0; x < bound.Width; x++)
-        {
-            var point = $"{bound.X + x},{bound.Y + bound.Height - 1}";
-            if (Lookup.TryGetValue(point, out collides))
-                return collides;
-        }
-        
-        // Check Left
-        for (int y = 0; y < bound.Height; y++)
-        {
-            var point = $"{bound.X},{bound.Y + y}";
-            if (Lookup.TryGetValue(point, out collides))
-                return collides;
-        }
-        
-        // Check Right
-        for (int y = 0; y < bound.Height; y++)
-        {
-            var point = $"{bound.X + bound.Width - 1},{bound.Y + y}";
-            if (Lookup.TryGetValue(point, out collides))
-                return collides;
-        }
-        
-        return null;
+        return list.ToList();
     }
 }
 public class MapEntrance : MapAsset
@@ -84,7 +64,6 @@ public class MapEntrance : MapAsset
     {
         Type = MapAssetType.Entrance;
     }
-    public string Name { get; set; }
     public string MapName { get; set; }
     public bool Destination { get; set; }
 }
@@ -112,12 +91,20 @@ public enum MapAssetType
 
 public class MapAsset
 {
+    public string Name { get; set; }
     public MapAssetType Type { get; set; }
     public List<MapPoint> Points { get; set; } = new List<MapPoint>();
+
+    public int Width => Points.Max(p => p.X) - X;
+    public int Height => Points.Max(p => p.Y) - Y;
+    
+    public int X => Points.Min(p => p.X);
+    public int Y => Points.Min(p => p.Y);
 
     public static MapAsset LoadFromAssets(string asset)
     {
         var mapAsset = new MapAsset();
+        mapAsset.Name = asset;
         mapAsset.Type = MapAssetType.Asset;
         
         using var stream = Assembly.GetEntryAssembly()!.GetManifestResourceStream("LD53.Game.Assets." + asset);

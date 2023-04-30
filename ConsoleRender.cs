@@ -124,7 +124,8 @@ public class ConsoleRender
     {
         try
         {
-            ViewBuffer[X, Y] = c;
+            if (X >= 0 && X < ViewBuffer.GetLength(0) && Y >= 0 && Y < ViewBuffer.GetLength(1))
+                ViewBuffer[X, Y] = c;
         }
         catch (Exception e)
         {
