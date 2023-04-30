@@ -32,9 +32,6 @@ public class Person : View
     {
         switch (key.Key)
         {
-            case ConsoleKey.D9:
-                GameState.Keys.Add(MapAsset.LoadFromAssets("Key"));
-                break;
             case ConsoleKey.LeftArrow:
                 Bound.X--;
                 if (CheckCollision())
