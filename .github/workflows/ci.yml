@@ -1,0 +1,17 @@
+﻿name: CI
+on: [push]
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Build
+        run: dotnet build -c Release
+      - name: Save artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build
+          retention-days: 5
+          path: "bin/Release/"
