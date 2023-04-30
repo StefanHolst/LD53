@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -125,6 +126,20 @@ public class Person : View
         var map = GameState.CurrentMap;
         var collision = map.Collides(Bound);
         if (collision != null)
+        {
             ShowMessage($"collided {collision.GetType().Name}");
+
+            if (collision is MapEntrance entrance && entrance.Destination == false)
+            {
+                GameState.ChangeMap(entrance);
+                
+                // Set figure location
+                var newEntrance = GameState.CurrentMap.Entrances.FirstOrDefault(e => e.Name == entrance.Name);
+                var location = newEntrance.Points.FirstOrDefault();
+
+                Bound.X = location.X;
+                Bound.Y = location.Y;
+            }
+        }
     }
 }

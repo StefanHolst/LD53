@@ -7,6 +7,7 @@ public class Dialog : Frame
 {
     private string Message;
     private Action Ok;
+    private Action Cancel;
 
     public static void Show(string title, string message)
     {
@@ -24,9 +25,43 @@ public class Dialog : Frame
         {
             tokenSource.Cancel();
         };
+        dialog.Cancel = () =>
+        {
+            tokenSource.Cancel();
+        };
         
         render.Run(dialog, tokenSource.Token);
         ConsoleRender.RedrawEverything();
+    }
+    public static string ShowInput(string title, string message)
+    {
+        var dialog = new Dialog(title, message);
+        dialog.Bound.Width = message.Length + 6;
+        dialog.Bound.Height = 8;
+        dialog.Bound.VerticalAlignment = Alignment.Center;
+        dialog.Bound.HorizontalAlignment = Alignment.Center;
+
+        var textBox = new TextBox();
+        textBox.SetBound(0, 3, 0, 3, Alignment.Strech, Alignment.End);
+        dialog.AddChildView(textBox);
+        
+        var render = new ConsoleRender();
+        var tokenSource = new CancellationTokenSource();
+        
+        // wait for input
+        dialog.Ok = () =>
+        {
+            tokenSource.Cancel();
+        };
+        dialog.Cancel = () =>
+        {
+            tokenSource.Cancel();
+        };
+        
+        render.Run(dialog, tokenSource.Token);
+        ConsoleRender.RedrawEverything();
+        
+        return textBox.Content;
     }
 
     public override bool PreviewKeyPressed(ConsoleKeyInfo key)
@@ -34,6 +69,11 @@ public class Dialog : Frame
         if (key.Key == ConsoleKey.Enter)
         {
             Ok?.Invoke();
+            return true;
+        }
+        if (key.Key == ConsoleKey.Escape)
+        {
+            Cancel?.Invoke();
             return true;
         }
 

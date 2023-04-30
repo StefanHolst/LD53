@@ -111,7 +111,7 @@ public abstract class View
             Alignment.Strech => 1,
             Alignment.Fill => 0,
             Alignment.Center => (Parent.Bound.Height - Bound.Height) / 2,
-            Alignment.End => Parent.Bound.Height - Bound.Height,
+            Alignment.End => Parent.Bound.Height - Bound.Height - 1,
             _ => Bound.Y + 1
         };
     }

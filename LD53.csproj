@@ -35,6 +35,14 @@
     <EmbeddedResource Include="Game\Assets\Table" />
     <None Remove="Game\Assets\VDoor" />
     <EmbeddedResource Include="Game\Assets\VDoor" />
+    <None Remove="Game\Assets\Chest" />
+    <EmbeddedResource Include="Game\Assets\Chest" />
+    <None Remove="Maps\Morse.map" />
+    <EmbeddedResource Include="Maps\Morse.map" />
+    <None Remove="Game\Assets\Chair" />
+    <EmbeddedResource Include="Game\Assets\Chair" />
+    <None Remove="Game\Assets\BoxSlot" />
+    <EmbeddedResource Include="Game\Assets\BoxSlot" />
   </ItemGroup>
 
 </Project>

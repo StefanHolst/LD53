@@ -26,10 +26,18 @@ public class MapConstructor : View
         new() { Points = new List<MapPoint> { new(0, 0, ConsoleChars.RightTee) }, Type = MapAssetType.Wall },
         new() { Points = new List<MapPoint> { new(0, 0, ConsoleChars.TopTee) }, Type = MapAssetType.Wall },
         new() { Points = new List<MapPoint> { new(0, 0, ConsoleChars.BottomTee) }, Type = MapAssetType.Wall },
+        new() { Points = new List<MapPoint> { new(0, 0, '/') }, Type = MapAssetType.Wall },
+        new() { Points = new List<MapPoint> { new(0, 0, '\\') }, Type = MapAssetType.Wall },
+        new() { Points = new List<MapPoint> { new(0, 0, 'x'), new(0, 1, 'x'), new(0, 2, 'x') }, Type = MapAssetType.Wall },
+        new() { Points = new List<MapPoint> { new(1, 0, 'x'), new(3, 0, 'x'), new(5, 0, 'x') }, Type = MapAssetType.Wall },
 
+        
         MapAsset.LoadFromAssets("Table"),
+        MapAsset.LoadFromAssets("Chair"),
         MapAsset.LoadFromAssets("Box"),
+        MapAsset.LoadFromAssets("BoxSlot"),
         MapAsset.LoadFromAssets("Key"),
+        MapAsset.LoadFromAssets("Chest"),
         MapAsset.LoadFromAssets("HDoor"),
         MapAsset.LoadFromAssets("VDoor"),
     };
@@ -37,18 +45,14 @@ public class MapConstructor : View
     public MapConstructor(string name)
     {
         _name = name;
-        if (File.Exists(_name))
-        {
-            var json = File.ReadAllText(_name);
-            map = JsonSerializer.Deserialize<Map>(json);
-        }
+        if (File.Exists($"Maps/{_name}.map"))
+            map = Map.Load(_name);
     }
 
     private int selectedAsset = 0;
     
     public override bool KeyPressed(ConsoleKeyInfo key)
     {
-
         switch (key.Key)
         {
             case ConsoleKey.LeftArrow:
@@ -80,13 +84,9 @@ public class MapConstructor : View
                         MapAssetType.Wall => map.Walls.Remove(existing.Points[0]),
                         MapAssetType.None => map.Text.Remove(existing.Points[0]),
                         MapAssetType.Asset => map.Assets.Remove(existing),
-                        // MapAssetType.Entrance => map.Entrances.Remove(existing),
+                        MapAssetType.Entrance => map.Entrances.Remove((MapEntrance)existing),
                     };
                 }
-                var selected = map.Walls.FirstOrDefault(c => c.X == Bound.X + x && c.Y == Bound.Y + y);
-                if (selected == null)
-                    break;
-                map.Walls.Remove(selected);
                 break;
             case ConsoleKey.D1:
                 if (selectedAsset > 0)
@@ -96,17 +96,34 @@ public class MapConstructor : View
                 if (selectedAsset < assets.Count - 1)
                     selectedAsset++;
                 break;
+            case ConsoleKey.D3:
+                // Insert entrance
+                var name = Dialog.ShowInput("Entrance", "Enter entrance name");
+                if (string.IsNullOrWhiteSpace(name))
+                    break;
+                var mapName = Dialog.ShowInput("Entrance", "Enter map name");
+                if (string.IsNullOrWhiteSpace(mapName))
+                    break;
+                var dir = Dialog.ShowInput("Entrance", "Enter direction (D, S)");
+                if (string.IsNullOrWhiteSpace(dir))
+                    break;
+                var entrance = new MapEntrance { Name = name, MapName = mapName, Destination = dir == "D"};
+                entrance.Points.Add(new MapPoint(Bound.X + x, Bound.Y + y, 'x'));
+                map.Entrances.Add(entrance);
+                break;
         }
 
+        // Save
         if ((key.Modifiers & ConsoleModifiers.Control) != 0 && key.Key == ConsoleKey.S)
         {
-            // Save
             var json  = JsonSerializer.Serialize(map);
-            File.WriteAllText(_name, json);
+            File.WriteAllText($"Maps/{_name}.map", json);
             Dialog.Show("Save", "Saved map");
+            return false;
         }
 
-        if (key.Key >= ConsoleKey.A && key.Key <= ConsoleKey.Z)
+        // Text
+        if ((key.Key >= ConsoleKey.A && key.Key <= ConsoleKey.Z) || key.KeyChar == '?' || key.KeyChar == '.' || key.KeyChar == '!' || key.KeyChar == ',' || key.KeyChar == ' ')
         {
             var selected = map.Text.FirstOrDefault(c => c.X == Bound.X + x && c.Y == Bound.Y + y);
             if (selected != null)
@@ -120,11 +137,26 @@ public class MapConstructor : View
         if (drawing)
         {
             var asset = assets[selectedAsset];
+            map.UpdateLookup();
+            if (map.Lookup.ContainsKey($"{Bound.X + x},{Bound.Y + y}"))
+            {
+                var existing = map.Lookup[$"{Bound.X + x},{Bound.Y + y}"];
+                _ = existing.Type switch
+                {
+                    MapAssetType.Wall => map.Walls.Remove(existing.Points[0]),
+                    MapAssetType.None => map.Text.Remove(existing.Points[0]),
+                    MapAssetType.Asset => map.Assets.Remove(existing),
+                    // MapAssetType.Entrance => map.Entrances.Remove(existing),
+                };
+            }
+            
             switch (asset.Type)
             {
                 case MapAssetType.Wall:
                     foreach (var point in asset.Points)
                         map.Walls.Add(new (Bound.X + x + point.X, Bound.Y + y + point.Y, point.C));
+                    if (asset.Points.Count > 1)
+                        drawing = false;
                     break;
                 case MapAssetType.Asset:
                     var newAsset = new MapAsset()
@@ -133,13 +165,9 @@ public class MapConstructor : View
                         Type = asset.Type,
                     };
                     map.Assets.Add(newAsset);
+                    drawing = false;
                     break;
             }
-            // selected = map.Walls.FirstOrDefault(c => c.X == Bound.X + x && c.Y == Bound.Y + y);
-            // if (selected != null)
-            //     selected.C = chars[selectedAsset];
-            // else
-            //     map.Walls.Add(new (Bound.X + x, Bound.Y + y, chars[selectedAsset]));
         }
 
         return false;
@@ -169,6 +197,16 @@ public class MapConstructor : View
         {
             Move(point.X, point.Y);
             Draw(point.C);
+        }
+        
+        // Draw entrance
+        foreach (var entrance in map.Entrances)
+        {
+            foreach (var point in entrance.Points)
+            {
+                Move(point.X, point.Y);
+                Draw(point.C);
+            }
         }
 
         // Draw cursor

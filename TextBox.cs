@@ -7,6 +7,7 @@ namespace LD53;
 public class TextBox : Frame
 {
     public bool MultiLine { get; set; }
+    public string Content => content.ToString();
 
     private StringBuilder content = new StringBuilder();
     

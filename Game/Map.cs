@@ -1,50 +1,27 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace LD53;
 
-public class MapViewer : View
-{
-    public Map map = new Map();
-
-    public MapViewer(string path)
-    {
-        if (File.Exists(path))
-            map = Map.Load(path);
-        var person = new Person();
-        AddChildView(person);
-        person.Bound.X = 24;
-        person.Bound.Y = 4;
-    }
-
-
-    public override void Render()
-    {
-        foreach (var point in map.Walls)
-        {
-            Move(point.X, point.Y);
-            Draw(point.C);
-        }
-    }
-}
-
 public class Map
 {
+    public string Name { get; set; }
     public List<MapPoint> Walls { get; set; } = new List<MapPoint>();
     public List<MapPoint> Text { get; set; } = new List<MapPoint>();
     public List<MapEntrance> Entrances { get; set; } = new List<MapEntrance>();
     public List<MapAsset> Assets { get; set; } = new List<MapAsset>();
 
+    [JsonIgnore]
     public Dictionary<string, MapAsset> Lookup { get; set; }
 
-    public static Map Load(string path)
+    public static Map Load(string name)
     {
-        var json = File.ReadAllText(path);
+        var json = File.ReadAllText($"Maps/{name}.map");
         var map = JsonSerializer.Deserialize<Map>(json);
+        map.Name = name;
         map.UpdateLookup();
         return map;
     }
@@ -54,8 +31,8 @@ public class Map
         Lookup = new Dictionary<string, MapAsset>();
         foreach (var wall in Walls)
             Lookup[$"{wall.X},{wall.Y}"] = new() { Points = new List<MapPoint> { wall }, Type = MapAssetType.Wall};
-        // foreach (var entrance in Entrances)
-        //     Lookup[$"{entrance.X},{entrance.Y}"] = entrance;
+        foreach (var entrance in Entrances)
+            Lookup[$"{entrance.Points[0].X},{entrance.Points[0].Y}"] = entrance;
         foreach (var asset in Assets)
             foreach (var point in asset.Points)
                 Lookup[$"{point.X},{point.Y}"] = asset;
@@ -63,27 +40,53 @@ public class Map
             Lookup[$"{point.X},{point.Y}"] = new() { Points = new List<MapPoint> { point }, Type = MapAssetType.None };
     }
 
-    public object Collides(Bounds bound)
+    public MapAsset Collides(Bounds bound)
     {
-        var x1 = $"{bound.X},{bound.Y}";
-        var x2 = $"{bound.X + bound.Width - 1},{bound.Y}";
-        // Check corners
-        if (Lookup.ContainsKey(x1))
-            return Lookup[x1];
-        if (Lookup.ContainsKey(x2))
-            return Lookup[x2];
-
+        MapAsset collides;
+        // Check top
+        for (int x = 0; x < bound.Width; x++)
+        {
+            var point = $"{bound.X + x},{bound.Y}";
+            if (Lookup.TryGetValue(point, out collides))
+                return collides;
+        }
+        
+        // Check bottom
+        for (int x = 0; x < bound.Width; x++)
+        {
+            var point = $"{bound.X + x},{bound.Y + bound.Height - 1}";
+            if (Lookup.TryGetValue(point, out collides))
+                return collides;
+        }
+        
+        // Check Left
+        for (int y = 0; y < bound.Height; y++)
+        {
+            var point = $"{bound.X},{bound.Y + y}";
+            if (Lookup.TryGetValue(point, out collides))
+                return collides;
+        }
+        
+        // Check Right
+        for (int y = 0; y < bound.Height; y++)
+        {
+            var point = $"{bound.X + bound.Width - 1},{bound.Y + y}";
+            if (Lookup.TryGetValue(point, out collides))
+                return collides;
+        }
+        
         return null;
     }
 }
-public class MapEntrance
+public class MapEntrance : MapAsset
 {
-    public int X { get; set; }
-    public int Y { get; set; }
-    public int Height { get; set; }
-    public int Width { get; set; }
-
-    public Map Map { get; set; }
+    public MapEntrance()
+    {
+        Type = MapAssetType.Entrance;
+    }
+    public string Name { get; set; }
+    public string MapName { get; set; }
+    public bool Destination { get; set; }
 }
 public class MapPoint
 {
