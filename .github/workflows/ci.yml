@@ -9,31 +9,31 @@ jobs:
         uses: actions/checkout@v3
       - name: Build
         run: |
-          dotnet publish -r win-x64 -p:PublishSingleFile=true --self-contained false
-          dotnet publish -r linux-x64 -p:PublishSingleFile=true --self-contained false
-          dotnet publish -r osx-x64 -p:PublishSingleFile=true --self-contained false
-          dotnet publish -r osx.13-arm64 -p:PublishSingleFile=true --self-contained false
+          dotnet publish -r win-x64 -p:PublishSingleFile=true --self-contained true
+          dotnet publish -r linux-x64 -p:PublishSingleFile=true --self-contained true
+          dotnet publish -r osx-x64 -p:PublishSingleFile=true --self-contained true
+          dotnet publish -r osx.13-arm64 -p:PublishSingleFile=true --self-contained true
       - name: Save artifacts
         uses: actions/upload-artifact@v3
         with:
           name: Windows
           retention-days: 30
-          path: "bin/Debug/win-x64/publish/*"
+          path: "bin/Debug/win-x64/publish/LD53.exe"
       - name: Save artifacts
         uses: actions/upload-artifact@v3
         with:
           name: Linux
           retention-days: 30
-          path: "bin/Debug/linux-x64/publish/*"
+          path: "bin/Debug/linux-x64/publish/LD53"
       - name: Save artifacts
         uses: actions/upload-artifact@v3
         with:
           name: MacOS
           retention-days: 30
-          path: "bin/Debug/osx.13-arm64/publish/*"
+          path: "bin/Debug/osx.13-arm64/publish/LD53"
       - name: Save artifacts
         uses: actions/upload-artifact@v3
         with:
           name: MacOSx64
           retention-days: 30
-          path: "bin/Debug/osx-x64/publish/*"
+          path: "bin/Debug/osx-x64/publish/LD53"
